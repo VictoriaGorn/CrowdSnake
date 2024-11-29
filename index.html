@@ -12,12 +12,27 @@
             <img src="dots.svg" alt="Left SVG">
         </div>
         <div id="canvasContainer">
-            <canvas id="gameCanvas" width="500" height="500"></canvas>
+            <canvas id="gameCanvas" width="500px" height="500px"></canvas>
+            <div id="controlContainer">
+                <button id="up">↑</button>
+                <div id="horizontalButtons">
+                    <button id="left">←</button>
+                    <button id="down">↓</button>
+                    <button id="right">→</button>
+                </div>
+            </div>
+            <div id="pauseButton">
+                <button id="pause">Обед</button>
+            </div>    
+            <div id="gameOverOverlay">
+                <div id="gameOverMessage"></div>
+                <button id="restartButton">Участвовать в новом конкурсе</button>
+            </div>                                
         </div>
         <div id="svgRight">
             <img src="lines.svg" alt="Right SVG">
         </div>
-    </div>
+    </div>  
     <script src="game.js"></script>
 </body>
 </html>

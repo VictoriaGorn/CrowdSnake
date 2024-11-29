@@ -13,7 +13,7 @@ let direction = 'right';
 let foods = [];
 
 let score = 0;
-let speed = 100;
+let speed = 50;
 
 document.addEventListener('keydown', function(e) {
     if (e.keyCode === 37 && direction !== 'right') direction = 'left';
@@ -21,6 +21,36 @@ document.addEventListener('keydown', function(e) {
     else if (e.keyCode === 39 && direction !== 'left') direction = 'right';
     else if (e.keyCode === 40 && direction !== 'up') direction = 'down';
 });
+
+document.getElementById('up').addEventListener('click', () => {
+    if (direction !== 'down') direction = 'up';
+});
+
+document.getElementById('down').addEventListener('click', () => {
+    if (direction !== 'up') direction = 'down';
+});
+
+document.getElementById('left').addEventListener('click', () => {
+    if (direction !== 'right') direction = 'left';
+});
+
+document.getElementById('right').addEventListener('click', () => {
+    if (direction !== 'left') direction = 'right';
+});
+
+let isPaused = false;
+
+document.getElementById('pause').addEventListener('click', () => {
+    isPaused = !isPaused;
+    const pauseButton = document.getElementById('pause');
+    if (isPaused) {
+        pauseButton.textContent = 'Работа';
+    } else {
+        gameLoop();
+        pauseButton.textContent = 'Обед';
+    }
+});
+
 
 class Food {
     constructor(x, y, type) {
@@ -144,6 +174,19 @@ function generateFood() {
     return new FoodClass(x, y);
 }
 
+function gameOver(score) {
+    isPaused = !isPaused;
+    document.getElementById('gameOverOverlay').classList.add('active');
+    document.getElementById('gameOverMessage').innerText = `Проект отдали конкуренту! Проектов в работе: ${score}`;
+}
+
+document.getElementById('restartButton').addEventListener('click', () => {
+    document.getElementById('gameOverOverlay').classList.remove('active');
+    resetGame();
+    gameLoop();
+});
+
+
 function updateSnake() {
     let head = { x: snake[0].x, y: snake[0].y };
 
@@ -164,16 +207,14 @@ function updateSnake() {
 
     // Check boundaries
     if (head.x >= canvas.width || head.x < 0 || head.y >= canvas.height || head.y < 0) {
-        alert('Проект отдали конкуренту! Проектов в работе: ' + score);
-        resetGame();
+        gameOver(score);
         return;
     }
 
     // Check collision with itself
     for (let i = 1; i < snake.length; i++) {
         if (head.x === snake[i].x && head.y === snake[i].y) {
-            alert('Проект отдали конкуренту! Проектов в работе: ' + score);
-            resetGame();
+            gameOver(score);
             return;
         }
     }
@@ -209,7 +250,7 @@ function updateSnake() {
     }
 
     speed = 100 - (score * 5); // decrease speed based on score
-    if (speed < 50) speed = 50; // minimum speed
+    if (speed < 50 || speed > 100) speed = 50; // minimum speed
 }
 
 function resetGame() {
@@ -218,8 +259,9 @@ function resetGame() {
     ];
     direction = 'right';
     score = 0;
-    speed = 100;
+    speed = 50;
     foods = [generateFood()];
+    isPaused = false;
 }
 
 let foodImg = new Image();
@@ -279,9 +321,11 @@ function isCollidingWithSVG(segment) {
 }
 
 function gameLoop() {
-    updateSnake();
-    drawSnake();
-    setTimeout(gameLoop, speed);
+    if (!isPaused) {
+        updateSnake();
+        drawSnake();   
+        setTimeout(gameLoop, speed);
+    }
 }
 
 // Initialize foods
